@@ -28,6 +28,7 @@ public class Main {
 	private static final int SIZE = 100;
 	private static final String BOUNDARY = "ibaZeByNeFreeMapTaNeviemCiNeHej";
 	private static final String APP_ID = "cafebabecafebabecafebabecafebabee";
+	private static final String PANORAMIO_USER_ID = "1";
 
 
 	private static class Photo {
@@ -43,7 +44,7 @@ public class Main {
 	public static void main(final String[] args) throws MalformedURLException, IOException, JSONException {
 
 		for (int from = 0; ; from += SIZE) {
-			final InputStream is = new URL("http://www.panoramio.com/map/get_panoramas.php?set=4667040&from=" + from + "&to=" + (from + SIZE) + "&size=original&mapfilter=false").openStream();
+			final InputStream is = new URL("http://www.panoramio.com/map/get_panoramas.php?set=" + PANORAMIO_USER_ID + "&from=" + from + "&to=" + (from + SIZE) + "&size=original&mapfilter=false").openStream();
 
 			final JSONObject jo = new JSONObject(new JSONTokener(is));
 
