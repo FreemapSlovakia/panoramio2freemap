@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Panoramio2Freemap" basedir="." default="jar">
+	<property name="src" value="src"/>
+	<property name="output" value="bin"/>
+
+	<target name="compile" depends="create">
+		<javac destdir="bin">
+			<src path="${src}"/>
+			<classpath refid="java"/>
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile">
+		<jar destfile="panoramio2freemap.jar">
+			<fileset dir="bin"/>
+		</jar>
+	</target>
+
+
+	<target name="clean">
+		<delete dir="${output}"/>
+	</target>
+
+	<target name="create" depends="clean">
+		<mkdir dir="${output}"/>
+	</target>
+
+	<path id="java">
+		<!--
+		<fileset dir="D:\Jars\Hibernate">
+			<include name="*.jar"/>
+		</fileset>
+		-->
+	</path>
+</project>
