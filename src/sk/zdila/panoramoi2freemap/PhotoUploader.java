@@ -20,13 +20,10 @@ import java.net.UnknownHostException;
 
 class PhotoUploader {
 
-	// Freemap Autentifikačný kľúč
-	public static final String APP_ID = "65c86660731ef23e7c6b9999ecab39de";
-
 	private static final String BOUNDARY = "FreeMapTaNeviemCiNeHejIbaZeByNe";
 
 
-	static void upload(final Photo photo) throws UnknownHostException, IOException, UnsupportedEncodingException, MalformedURLException,
+	static void upload(final String appKey, final Photo photo) throws UnknownHostException, IOException, UnsupportedEncodingException, MalformedURLException,
 			FileNotFoundException, InterruptedException {
 		System.out.println("=====================================> " + photo.url);
 
@@ -45,7 +42,7 @@ class PhotoUploader {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		final Writer w1 = new OutputStreamWriter(baos, "UTF-8");
 		writeParameter(w1, "rules", "1");
-		writeParameter(w1, "k", APP_ID);
+		writeParameter(w1, "k", appKey);
 		writeParameter(w1, "lat", Double.toString(photo.latitude));
 		writeParameter(w1, "lon", Double.toString(photo.longitude));
 		writeParameter(w1, "title", photo.title);

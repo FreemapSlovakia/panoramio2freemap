@@ -19,8 +19,13 @@ public class Picasa2Freemap {
 	 * @throws InterruptedException
 	 */
 	public static void main(final String[] args) throws IOException, ServiceException, InterruptedException {
-		final PicasawebService myService = new PicasawebService("exampleCo-exampleApp-1");
-		final URL feedUrl1 = new URL("http://picasaweb.google.com/data/feed/api/user/peter.misovic?kind=album");
+		if (args.length != 3) {
+			System.err.println("arguments: picasaUser albumName freemapAuthKey");
+			System.exit(1);
+		}
+
+		final PicasawebService myService = new PicasawebService("freemapPhotoImporter");
+		final URL feedUrl1 = new URL("http://picasaweb.google.com/data/feed/api/user/" + args[0] + "?kind=album");
 
 		final UserFeed myUserFeed = myService.getFeed(feedUrl1, UserFeed.class);
 
@@ -50,7 +55,7 @@ public class Picasa2Freemap {
 		found: {
 			for (final AlbumEntry myAlbum : myUserFeed.getAlbumEntries()) {
 				// System.out.println(myAlbum.getHtmlLink().getHref());
-				if (myAlbum.getName().equals("KosiceErikaNalepkovoStratenaPoprad")) {
+				if (myAlbum.getName().equals(args[1])) {
 					feed = myAlbum.getFeed("photo");
 //					feedUrl = new URL(myAlbum.getId());
 					break found;
@@ -84,7 +89,7 @@ public class Picasa2Freemap {
 		    photo1.title = photo.getDescription().getPlainText();
 			photo1.description = "Picasa Photo ID: " + photo.getId();
 		    photo1.url = ((com.google.gdata.data.MediaContent) photo.getContent()).getUri();
-		    PhotoUploader.upload(photo1);
+		    PhotoUploader.upload(args[2], photo1);
 		}
 	}
 

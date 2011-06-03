@@ -33,21 +33,20 @@ import org.json.JSONTokener;
  */
 public class Panoramio2Freemap {
 
-	// file containing Panoramip Photo IDs of blacklisted photos - one per line.
-	private static final String BLACKLIST_IDS = "/home/martin/panora-blacklist";
-
 	// batch size - max 100 is supported by Panoramio API
 	private static final int SIZE = 50;
 
-	// Panoramio User ID
-	private static final String PANORAMIO_USER_ID = "4667040";
-
 
 	public static void main(final String[] args) throws MalformedURLException, IOException, JSONException, InterruptedException {
+		if (args.length < 2 || args.length > 3) {
+			System.err.println("arguments: panoramioUserID freemapAuthKey [blacklistedIdsFile]");
+			System.exit(1);
+		}
+
 		final Set<Integer> importedSet = new HashSet<Integer>();
-		final File file = new File(BLACKLIST_IDS);
-		if (file.exists()) {
-			final BufferedReader br = new BufferedReader(new FileReader(file));
+		// file containing Panoramip Photo IDs of blacklisted photos - one per line.
+		if (args.length > 2) {
+			final BufferedReader br = new BufferedReader(new FileReader(new File(args[2])));
 			String line;
 			while ((line = br.readLine()) != null) {
 				importedSet.add(Integer.parseInt(line));
@@ -58,7 +57,7 @@ public class Panoramio2Freemap {
 		final Socket socket = new Socket("dev.freemap.sk", 80);
 		final OutputStream os = socket.getOutputStream();
 		final Writer w = new OutputStreamWriter(os, "UTF-8");
-		w.write("GET /api/0/1/gallery/query?k=" + PhotoUploader.APP_ID + " HTTP/1.0\r\n");
+		w.write("GET /api/0/1/gallery/query?k=" + args[1] + " HTTP/1.0\r\n");
 		w.write("Host: dev.freemap.sk\r\n");
 		w.write("\r\n");
 		w.flush();
@@ -88,7 +87,7 @@ public class Panoramio2Freemap {
 
 
 		for (int from = 0; ; from += SIZE) {
-			final InputStream is = new URL("http://www.panoramio.com/map/get_panoramas.php?set=" + PANORAMIO_USER_ID + "&from=" + from + "&to=" + (from + SIZE) + "&size=original&mapfilter=false").openStream();
+			final InputStream is = new URL("http://www.panoramio.com/map/get_panoramas.php?set=" + args[0] + "&from=" + from + "&to=" + (from + SIZE) + "&size=original&mapfilter=false").openStream();
 
 			final JSONObject jo = new JSONObject(new JSONTokener(is));
 
@@ -121,12 +120,7 @@ public class Panoramio2Freemap {
 			is.close();
 
 			for (final Photo photo : photos) {
-				PhotoUploader.upload(photo);
-			}
-
-			if (new File("/home/martin/stop").exists()) {
-				System.out.println("STOP");
-				break;
+				PhotoUploader.upload(args[1], photo);
 			}
 
 			if (!jo.getBoolean("has_more")) {
